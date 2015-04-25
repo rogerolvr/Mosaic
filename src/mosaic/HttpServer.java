@@ -1,22 +1,15 @@
 package mosaic;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
 
 public class HttpServer {
 
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
 
     public HttpServer(String host, int port) {
         super();
@@ -53,12 +46,11 @@ public class HttpServer {
 
                 // Receive the browser's request and manipulate it
                 Request request = new Request();
-                request.parse(in);
-
+                request.getRequest(in , 1);
+                
                 // Create the reply and send it back to the browser
                 Reply reply = new Reply(request);
-                String replyString = reply.dummyReply();
-                out.write(replyString.getBytes());
+                reply.sendReply(out , 0);
 
                 // Close the socket connection
                 socket.close();

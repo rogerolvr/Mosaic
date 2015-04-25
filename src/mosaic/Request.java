@@ -18,48 +18,54 @@ public class Request {
     public Request() {
     }
 
-    // Parse the entire stream in a string adding the number of each row.
-    public void parse(InputStream is) {
-
-        System.out.println("\nConnection established.\n \nRequest:");
+    public void getRequest(InputStream is, int log) {
 
         if (is != null) {
-            Writer writer = new StringWriter();
-            char[] buffer = new char[2048];
-
-            try {
-                Reader reader = new BufferedReader(new InputStreamReader(is));
-                int i = reader.read(buffer);
-                writer.write(buffer, 0, i);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String input = writer.toString();
-
-            BufferedReader br = new BufferedReader(new StringReader(input));
+            
+            if (log == 1) { System.out.println("\nConnection established.\n \nRequest:");}
+                                    
+            char[] buffer = new char[5120];
             String line = null;
-
             int lineNumber = 0;
+
             try {
+                
+                // Receive the request and transforms into a string
+                Reader r = new BufferedReader(new InputStreamReader(is));
+                int i = r.read(buffer);
+                Writer writer = new StringWriter();
+                writer.write(buffer, 0, i);
+                String input = writer.toString();
+
+                // Read the request(string)and split the information to be handle.
+                BufferedReader br = new BufferedReader(new StringReader(input));
                 while ((line = br.readLine()) != null) {
-                    System.out.println(lineNumber + " " + line);
-                    if (lineNumber == 0) {
-                        String[] values = line.split(" ");
-                        if (values.length == 3) {
+                    switch (lineNumber) {
+                        case 0:
+                            String[] values = line.split(" ");
                             this.method = values[0];
                             this.uri = values[1];
                             this.protocol = values[2];
-                        }
-                    } else {
+                            break;
                     }
                     lineNumber++;
+
+                    if (log == 1) { logRequest(line); }
+
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            this.protocol = "POST";
         }
+    }
 
+    // Log all the requests received 
+    public void logRequest(String requestLine) {
+       
+        System.out.println(requestLine);
+        
+        // Todo another ways of logs
     }
 
     public String getMethod() {
