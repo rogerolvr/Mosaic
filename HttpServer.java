@@ -10,6 +10,7 @@ public class HttpServer {
 
     private final String host;
     private final int port;
+    public static final String root = "/mnt/data/Apps/samples/java/mosaic/src/mosaic/www";
 
     public HttpServer(String host, int port) {
         super();

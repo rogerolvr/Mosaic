@@ -24,7 +24,7 @@ public class Request {
             
             if (log == 1) { System.out.println("\nConnection established.\n \nRequest:");}
                                     
-            char[] buffer = new char[5120];
+            char[] buffer = new char[10240];
             String line = null;
             int lineNumber = 0;
 
@@ -56,7 +56,6 @@ public class Request {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            this.protocol = "POST";
         }
     }
 
