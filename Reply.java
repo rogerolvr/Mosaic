@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import jdk.nashorn.internal.objects.NativeArray;
 
 public class Reply {
 
@@ -55,7 +56,7 @@ public class Reply {
         byte[] header = new byte[(int) file.length()];
         byte[] reply = null;
         InputStream fileIn;
-        
+
         // Get the headers with the right status
         switch (status) {
             case 200:
@@ -97,16 +98,28 @@ public class Reply {
         switch (status) {
             case 200:
                 headers.append("HTTP/1.1 200 OK").append("\r\n");
+                
+                // Validate what type of content will be send
+                try {
+                    String[] type = request.getUri().split("[.]");
+                    if (type[1].equals("html")) {
+                        headers.append("Content-Type: text/html; charset=UTF-8").append("\r\n");
+                    } else {
+                        headers.append("Content-Type: image/").append(type[1]).append("\r\n");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case 404:
                 headers.append("HTTP/1.1 404 Not found").append("\r\n");
+                headers.append("Content-Type: text/html; charset=UTF-8").append("\r\n");
                 break;
-
         }
+            
         headers.append("Date: ").append(timestamp.format(new Date())).append("\r\n");
         headers.append("Server: Mosaic Web Server").append("\r\n");
         headers.append("Connection: Close").append("\r\n");
-        headers.append("Content-Type: text/html; charset=UTF-8").append("\r\n");
         headers.append("\r\n");
 
         return headers.toString();
